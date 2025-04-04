@@ -50,7 +50,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ onBack }) => {
         description: "Your note has been updated successfully.",
       });
     } else {
+      // This is where the issue is. The addNote function returns a Note, 
+      // but we weren't handling it correctly
       const newNote = addNote({ title, content });
+      // Now we properly set the current note with the returned newNote value
       setCurrentNote(newNote);
       toast({
         title: "Note created",

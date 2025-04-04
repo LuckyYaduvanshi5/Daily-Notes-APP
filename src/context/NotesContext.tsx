@@ -11,7 +11,7 @@ type Action =
 
 interface NotesContextProps {
   state: NotesState;
-  addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Note;
   updateNote: (note: Note) => void;
   deleteNote: (id: string) => void;
   setCurrentNote: (note: Note | null) => void;
@@ -72,7 +72,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('daily-notes', JSON.stringify(state.notes));
   }, [state.notes]);
 
-  const addNote = (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addNote = (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Note => {
     const newNote: Note = {
       id: Date.now().toString(),
       ...noteData,
