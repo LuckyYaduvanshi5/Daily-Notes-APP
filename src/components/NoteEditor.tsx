@@ -1,13 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useNotes } from '@/context/NotesContext';
 import { Note } from '@/types/noteTypes';
-import { Share, ArrowLeft, Save, Trash } from 'lucide-react';
+import { Share, ArrowLeft, Save, Trash, Mic, MicOff } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { startRecording, stopRecording } from '@/utils/voiceNotes';
 
 interface NoteEditorProps {
   onBack: () => void;
@@ -17,15 +18,20 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ onBack }) => {
   const { state, addNote, updateNote, deleteNote, setCurrentNote } = useNotes();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
     if (state.currentNote) {
       setTitle(state.currentNote.title);
       setContent(state.currentNote.content);
+      setAudioUrl(state.currentNote.audioUrl);
     } else {
       setTitle('');
       setContent('');
+      setAudioUrl(undefined);
     }
   }, [state.currentNote]);
 
@@ -44,16 +50,18 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ onBack }) => {
         ...state.currentNote,
         title,
         content,
+        audioUrl
       });
       toast({
         title: "Note updated",
         description: "Your note has been updated successfully.",
       });
     } else {
-      // This is where the issue is. The addNote function returns a Note, 
-      // but we weren't handling it correctly
-      const newNote = addNote({ title, content });
-      // Now we properly set the current note with the returned newNote value
+      const newNote = addNote({ 
+        title, 
+        content,
+        audioUrl
+      });
       setCurrentNote(newNote);
       toast({
         title: "Note created",
@@ -87,6 +95,50 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ onBack }) => {
     });
   };
 
+  const handleStartRecording = async () => {
+    try {
+      const recorder = await startRecording();
+      if (recorder) {
+        mediaRecorderRef.current = recorder;
+        setIsRecording(true);
+        
+        toast({
+          title: "Recording started",
+          description: "Speak into your microphone. Click stop when done.",
+        });
+      }
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      toast({
+        title: "Recording failed",
+        description: "Could not access microphone. Please check permissions.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleStopRecording = async () => {
+    if (mediaRecorderRef.current) {
+      try {
+        const url = await stopRecording(mediaRecorderRef.current);
+        setAudioUrl(url);
+        setIsRecording(false);
+        
+        toast({
+          title: "Recording saved",
+          description: "Voice note has been added to your note.",
+        });
+      } catch (error) {
+        console.error('Error stopping recording:', error);
+        toast({
+          title: "Recording failed",
+          description: "There was an error saving your voice note.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
     <Card className="border-none shadow-none">
       <CardContent className="p-0">
@@ -101,6 +153,25 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ onBack }) => {
             <span>Back</span>
           </Button>
           <div className="flex gap-2">
+            {isRecording ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleStopRecording}
+              >
+                <MicOff className="h-4 w-4 mr-1" />
+                <span>Stop Recording</span>
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleStartRecording}
+              >
+                <Mic className="h-4 w-4 mr-1" />
+                <span>Record Voice</span>
+              </Button>
+            )}
             {state.currentNote && (
               <Button
                 variant="outline"
@@ -140,6 +211,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ onBack }) => {
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[300px] resize-none border-none p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
+          
+          {audioUrl && (
+            <div className="pt-4">
+              <h3 className="text-sm font-medium mb-2">Voice Note</h3>
+              <audio src={audioUrl} controls className="w-full" />
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

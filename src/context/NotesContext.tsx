@@ -1,6 +1,9 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Note, NotesState } from '../types/noteTypes';
+import { generatePDF } from '@/utils/pdfExport';
+import { backupToGoogleDrive } from '@/utils/driveBackup';
+import { useToast } from '@/components/ui/use-toast';
 
 type Action =
   | { type: 'SET_NOTES'; payload: Note[] }
@@ -15,6 +18,8 @@ interface NotesContextProps {
   updateNote: (note: Note) => void;
   deleteNote: (id: string) => void;
   setCurrentNote: (note: Note | null) => void;
+  exportToPDF: () => string;
+  backupToGoogleDrive: () => Promise<boolean>;
 }
 
 const NotesContext = createContext<NotesContextProps | undefined>(undefined);
@@ -99,6 +104,15 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     dispatch({ type: 'SET_CURRENT_NOTE', payload: note });
   };
 
+  const exportToPDF = (): string => {
+    return generatePDF(state.notes);
+  };
+
+  const backupToDrive = async (): Promise<boolean> => {
+    const notesJson = JSON.stringify(state.notes);
+    return await backupToGoogleDrive(notesJson);
+  };
+
   return (
     <NotesContext.Provider
       value={{
@@ -107,6 +121,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateNote,
         deleteNote,
         setCurrentNote,
+        exportToPDF,
+        backupToGoogleDrive: backupToDrive,
       }}
     >
       {children}

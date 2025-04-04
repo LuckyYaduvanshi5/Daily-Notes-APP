@@ -5,6 +5,8 @@ export interface Note {
   content: string;
   createdAt: string;
   updatedAt: string;
+  audioUrl?: string; // For voice notes
+  tags?: string[]; // For categorizing notes
 }
 
 export interface NotesState {

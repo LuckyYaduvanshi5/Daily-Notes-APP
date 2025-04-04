@@ -5,17 +5,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Daily Notes with WhatsApp Backup</title>
-    <meta name="description" content="A simple daily notes app with WhatsApp backup functionality" />
+    <meta name="description" content="A free daily notes app with WhatsApp backup, voice notes, and PDF export functionality" />
     <meta name="author" content="Lovable" />
+    <meta name="keywords" content="daily notes, note taking, whatsapp backup, voice notes, pdf export, google drive backup" />
 
-    <meta property="og:title" content="Daily Notes with WhatsApp Backup" />
-    <meta property="og:description" content="A simple daily notes app with WhatsApp backup functionality" />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://dailynotes.app/" />
+    <meta property="og:title" content="Daily Notes with WhatsApp Backup" />
+    <meta property="og:description" content="A free daily notes app with WhatsApp backup, voice notes, and PDF export functionality" />
+    <meta property="og:image" content="/lovable-uploads/b02a837e-d58b-45d7-9442-7b49903c5374.png" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="Daily Notes with WhatsApp Backup" />
+    <meta name="twitter:description" content="A free daily notes app with WhatsApp backup, voice notes, and PDF export functionality" />
+    <meta name="twitter:image" content="/lovable-uploads/b02a837e-d58b-45d7-9442-7b49903c5374.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/lovable-uploads/b02a837e-d58b-45d7-9442-7b49903c5374.png" />
+    <link rel="apple-touch-icon" href="/lovable-uploads/b02a837e-d58b-45d7-9442-7b49903c5374.png" />
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4ade80" />
   </head>
 
   <body>
@@ -23,5 +37,18 @@
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch(error => {
+              console.log('ServiceWorker registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

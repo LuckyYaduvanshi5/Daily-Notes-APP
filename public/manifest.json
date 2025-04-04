@@ -1,0 +1,22 @@
+
+{
+  "name": "Daily Notes with WhatsApp Backup",
+  "short_name": "Daily Notes",
+  "description": "A simple daily notes app with WhatsApp backup functionality",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4ade80",
+  "icons": [
+    {
+      "src": "/lovable-uploads/b02a837e-d58b-45d7-9442-7b49903c5374.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lovable-uploads/b02a837e-d58b-45d7-9442-7b49903c5374.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

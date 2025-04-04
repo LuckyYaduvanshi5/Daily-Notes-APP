@@ -1,11 +1,14 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useNotes } from '@/context/NotesContext';
 import Header from '@/components/Header';
 import NoteCard from '@/components/NoteCard';
 import NoteEditor from '@/components/NoteEditor';
 import EmptyState from '@/components/EmptyState';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { HelpCircle } from 'lucide-react';
 
 const Index = () => {
   const { state, setCurrentNote } = useNotes();
@@ -51,7 +54,18 @@ const Index = () => {
       ) : (
         <div className="mt-6">
           {state.notes.length === 0 ? (
-            <EmptyState onNewNote={handleNewNote} />
+            <div className="space-y-8">
+              <EmptyState onNewNote={handleNewNote} />
+              <div className="text-center">
+                <p className="text-muted-foreground">New to Daily Notes?</p>
+                <Link to="/how-to-use">
+                  <Button variant="link" className="mt-2">
+                    <HelpCircle className="h-4 w-4 mr-1" />
+                    How to use Daily Notes
+                  </Button>
+                </Link>
+              </div>
+            </div>
           ) : (
             <div className="space-y-8">
               {sortedDates.map((date) => (
